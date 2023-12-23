@@ -197,9 +197,8 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
 
     @Override
     @PostMapping("/message/auto-topic")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Automobile> pushMessage(@RequestBody Automobile automobile) {
-        log.info("\u001B[32m" + "Creating new topic" + "\u001B[0m");
+        log.info("\u001B[32m" + "Creating AutoTopic topic" + "\u001B[0m");
         Topic autoTopic = topicCreator.createTopic("AutoTopic");
         Automobile savedAutomobile = repository.save(automobile);
         log.info("\u001B[32m" + "Sending Automobile with id: " + savedAutomobile.getId() + "\u001B[0m");
@@ -207,4 +206,14 @@ public class AutomobileRestController implements AutomobileResource, AutomobileO
         return new ResponseEntity<>(savedAutomobile, HttpStatus.OK);
     }
 
+    @Override
+    @GetMapping(value = "/message/auto-topic")
+    public ResponseEntity<List<Automobile>> pushMessageWithAutomobileByColor(@RequestParam("color") String color) {
+        log.info("\u001B[32m" + "Creating AutoTopicByColor topic" + "\u001B[0m");
+        Topic autoTopic = topicCreator.createTopic("AutoTopicByColor");
+        List<Automobile> automobiles = repository.findByColor(color);
+        log.info("\u001B[32m" + "Sending Automobiles with color: " + color + "\u001B[0m");
+        jmsTemplate.convertAndSend(autoTopic, automobiles);
+        return new ResponseEntity<>(automobiles, HttpStatus.OK);
+    }
 }
