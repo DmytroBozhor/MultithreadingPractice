@@ -1,8 +1,10 @@
 package com.kaluzny.demo.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -46,6 +48,13 @@ public class AwesomeExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handleTimeoutException(TimeoutException ex) {
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(503), ex.getMessage());
         pd.setTitle("Service Unavailable or DB connection was refused");
+        return pd;
+    }
+
+    @ExceptionHandler(TopicNotCreatedException.class)
+    public ProblemDetail handleTimeoutException(TopicNotCreatedException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(500), ex.getMessage());
+        pd.setTitle("Topic could not be created");
         return pd;
     }
 }
